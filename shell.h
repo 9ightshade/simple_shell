@@ -1,76 +1,37 @@
 #ifndef SHELL_H
 #define SHELL_H
 
-#define BUFFERSIZE 1024
-#define DELIMINATOR "\n\r\t\a "
-
-extern char **environ;
-
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <signal.h>
+/*---LIBRARIES---*/
 #include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 #include <sys/wait.h>
-#include <unistd.h>
 
-/**
- * struct list_s - singly linked list
- * @str: string - (malloc'ed string)
- * @len: length of the string
- * @next: points to the next node
- *
- * Description: singly linked list node structure
- * for Holberton project
- */
+/*---Macros---*/
+#define TOK_DELIM " \t\r\n\a\""
+extern char **environ;
 
-typedef struct list_s
-{
-	char *str;
-	unsigned int len;
-	struct list_s *next;
-} list_t;
+/*---PROTOTYPES---*/
+/* main.c */
+void shell_interactive(void);
+void shell_no_interactive(void);
 
-extern char *head;
-
-
-int call_cd(char **args);
-void call_exit(char **args);
-int call_exit_status(char **args);
-int call_env(char **args);
-int call_help(char *args);
-int call_unsetenv(char **env, char **str);
-int call_setenv(char **env, char **str);
-int WhoAmI(void);
-
-int find_env_var(char **enviorment, char *str);
-int check_input(char **str, char **env);
-char *_getenv(char **env, char *str);
-int input_check(char **str, char **env, char *newstr, char *path, char *new2);
-
-int _isdigit(char str);
-int _exit_atoi(char *str);
-
-char **parse_line(char *line);
-
-int function_filter(char **commands, char **env);
-
-int exec_cmd(char **str, char **env);
+/* shell_interactive.c */
 char *read_line(void);
-char *_strcat(char *s1, char *s2);
-void ctrl_c_handler(int sig_num);
+char **split_line(char *line);
+int execute_args(char **args);
 
-int _atoi(char *str);
-char *_strdup(const char *str);
-int _strcmp(char *str1, char *str2);
-int _strlen(char *str);
-char *_strcpy(char *dest, char *src);
-void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
+/* execute_args */
+int new_process(char **args);
 
-list_t *add_node(list_t **head, const char *str);
-void free_list(list_t *head);
+/* shell_no_interactive */
+char *read_stream(void);
+
+/*---Builtin func---*/
+int own_cd(char **args);
+int own_exit(char **args);
+int own_env(char **args);
+int own_help(char **args);
 
 #endif
