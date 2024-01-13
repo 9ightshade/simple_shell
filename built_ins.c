@@ -1,87 +1,84 @@
 #include "shell.h"
 
 /**
- *  call_exit - Exits shell
+ * call_exit - Exits the shell.
  *
- *  @args: passes in char pointer
+ * @args: The arguments passed to the exit command.
  *
- *  Return: Integer
+ * Return: void
  */
-
 void call_exit(char **args)
 {
-	free(*args);
-	free(args);
-	exit(EXIT_SUCCESS);
+    /* Free the allocated memory for arguments and exit the shell */
+    free(*args);
+    free(args);
+    exit(EXIT_SUCCESS);
 }
 
 /**
- *  call_exit_status - Exit with a status
+ * call_exit_status - Exits the shell with a specific status.
  *
- *  @args: Double pointer
+ * @args: The arguments passed to the exit status command.
  *
- *  Return: void
+ * Return: 0 on success, -1 on failure.
  */
-
-
 int call_exit_status(char **args)
 {
-	int status;
+    int status;
 
-	status = _exit_atoi(args[1]);
+    /* Convert the exit status argument to an integer */
+    status = _exit_atoi(args[1]);
 
-	if (status == -1)
-	{
-		perror("hsh");
-		return (0);
-	}
-	else
-	{
-		exit(status);
-	}
+    if (status == -1)
+    {
+        perror("hsh");
+        return (0);
+    }
+    else
+    {
+        /* Exit the shell with the specified status */
+        exit(status);
+    }
 }
 
-
 /**
- *  call_cd - Change directory
+ * call_cd - Changes the current working directory.
  *
- *  @args: Passes in char pointer
+ * @args: The arguments passed to the cd command.
  *
- *  Return: Integer
+ * Return: 0 on success, -1 on failure.
  */
-
 int call_cd(char **args)
 {
-	char *targetDir = NULL, *home = NULL;
+    char *targetDir = NULL, *home = NULL;
 
-	home = _getenv(environ, "HOME");
+    /* Get the home directory */
+    home = _getenv(environ, "HOME");
 
-	if (args[1])
-	{
-		/* For cd ~ go home */
-		if (_strcmp(args[1], "~"))
-		{
-			targetDir = home;
-		}
-		/* cd - goes to previos directory */
-		else if (_strcmp(args[1], "-"))
-			targetDir = _getenv(environ, "OLDPWD");
-		else
-			targetDir = args[1];
-	}
-	else
-		targetDir = home;
+    if (args[1])
+    {
+        /* For "cd ~", go to the home directory */
+        if (_strcmp(args[1], "~"))
+        {
+            targetDir = home;
+        }
+        /* For "cd -", go to the previous directory */
+        else if (_strcmp(args[1], "-"))
+            targetDir = _getenv(environ, "OLDPWD");
+        else
+            targetDir = args[1];
+    }
+    else
+        targetDir = home;
 
-	if (targetDir == home)
-		chdir(targetDir);
+    /* If the target directory is the home directory, change to it */
+    if (targetDir == home)
+        chdir(targetDir);
+    /* If the target directory exists and has read permissions, change to it */
+    else if (access(targetDir, F_OK | R_OK) == 0)
+        chdir(targetDir);
+    else
+        perror("hsh");
 
-	/* F_OK tests if there */
-	/* R_OK grants read permissions */
-	else if (access(targetDir, F_OK | R_OK) == 0)
-		chdir(targetDir);
-	else
-		perror("hsh");
-	/*setenv("OLDPWD", _getenv(environ, "PWD"), 1);*/
-	/*setenv("PWD", getcwd(prevDir, sizeof(prevDir)), 1);*/
-	return (0);
+    return (0);
 }
