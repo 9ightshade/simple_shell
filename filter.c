@@ -1,58 +1,54 @@
 #include "shell.h"
 
 /**
- * function_filter - Filters built-ins and sends them to the appropriate function.
+ * function_filter - Filters built-ins & sends them to appropriate function
  *
- * @commands: Double pointer from the command line.
- * @env: Environment variable.
+ * @commands: Double pointer from command line
  *
- * Return: Returns the result of the exec_cmd function.
+ * @env: Environment variable
+ *
+ * Return: exec_cmd function
  */
+
 int function_filter(char **commands, char **env)
 {
-    int option = 0;
-    char *builtin[7] = {"exit", "cd", "env", "holberton", "unsetenv", "setenv", NULL};
+	int option = 0;
+	char *builtin[7] = {"exit", "cd", "env", "holberton", "unsetenv",
+			    "setenv", NULL};
 
-    /* If no args at all, continue */
-    if (commands[0] == NULL)
-        return (1);
-
-    /* Loop through the built-in commands to find a match */
-    while (builtin[option] != NULL)
-    {
-        if (_strcmp(builtin[option], commands[0]) == 0)
-            break;
-        option++;
-    }
-
-    /* Execute the corresponding built-in function or command */
-    switch (option)
-    {
-    case 0: /* Exit */
-        if (commands[1] == NULL)
-            call_exit(commands); /* Only 'exit' is typed */
-        else
-            call_exit_status(commands); /* 2nd arg after 'exit' */
-        break;
-    case 1:
-        call_cd(commands); /* 'cd' is typed */
-        break;
-    case 2:
-        call_env(env); /* 'env' is typed */
-        break;
-    case 3:
-        WhoAmI(); /* 'holberton' is typed */
-        break;
-    case 4:
-        call_unsetenv(env, commands); /* 'unsetenv' is typed */
-        break;
-    case 5:
-        call_setenv(env, commands); /* 'setenv' is typed */
-        break;
-    default:
-        return (exec_cmd(commands, env)); /* No built-in found, execute command */
-    }
-
-    return (option);
+	if (commands[0] == NULL) /* If no args at all, continue */
+		return (1);
+	while (builtin[option] != NULL)
+	{
+		if (_strcmp(builtin[option], commands[0]) == 0)
+			break;
+		option++;
+	}
+	switch (option)
+	{
+	case 0: /* Exit */
+		if (commands[1] == NULL) /* Only exit is typed */
+			call_exit(commands);
+		else
+			call_exit_status(commands); /* Is 2nd arg after exit */
+		break;
+	case 1:
+		call_cd(commands); /* cd is typed */
+		break;
+	case 2:
+		call_env(env); /* env is typed */
+		break;
+	case 3:
+		WhoAmI();
+		break;
+	case 4:
+		call_unsetenv(env, commands);
+		break;
+	case 5:
+		call_setenv(env, commands);
+		break;
+	default:
+		return (exec_cmd(commands, env)); /* No builtin found */
+	}
+	return (option);
 }
-
